@@ -1,7 +1,7 @@
 #![no_main]
 #![no_std]
 
-use panic_halt as _;
+use panic_probe as _;
 
 use cortex_m::asm::wfi;
 use cortex_m_rt::entry;
@@ -11,7 +11,7 @@ use microbit::{
         self,
         twim,
         pac::twim0,
-    }
+    },
 };
 
 use mb2_wukong_expansion::{WuKong, LightMode};
