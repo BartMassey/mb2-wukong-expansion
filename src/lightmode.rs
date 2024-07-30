@@ -11,7 +11,7 @@ where
     D: delay::DelayNs,
     T: twim::Instance,
 {
-    pub fn set_light_mode(&mut self, light_mode: LightMode) -> Result<(), hal::twim::Error> {
+    pub fn set_light_mode(&mut self, light_mode: LightMode) -> Result<(), twim::Error> {
         match light_mode {
             LightMode::Breath => {
                 let buf = [0x11, 0, 0, 0];
