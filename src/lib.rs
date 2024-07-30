@@ -2,11 +2,11 @@
 
 pub mod lightmode;
 pub mod motor;
-//pub mod servo;
+pub mod servo;
 
 pub use lightmode::*;
 pub use motor::*;
-//pub use servo::*;
+pub use servo::*;
 
 use embedded_hal::delay;
 use nrf52833_hal::{gpio, pac::twim0, twim};
@@ -14,6 +14,7 @@ use nrf52833_hal::{gpio, pac::twim0, twim};
 pub struct WuKong<D: delay::DelayNs, T: twim::Instance> {
     i2c: twim::Twim<T>,
     delay: D,
+    servo_max_angles: [Option<ServoAngle>; 8],
 }
 
 pub type SCL = gpio::p0::P0_26<gpio::Input<gpio::Floating>>;
@@ -33,7 +34,8 @@ where
         };
         let freq = twim0::frequency::FREQUENCY_A::K100;
         let i2c = twim::Twim::new(i2c, pins, freq);
-        Self { i2c, delay }
+        let servo_max_angles = Default::default();
+        Self { i2c, delay, servo_max_angles }
     }
 
 }
