@@ -6,14 +6,7 @@ use rtt_target::rtt_init_print;
 
 use cortex_m::asm::wfi;
 use cortex_m_rt::entry;
-use microbit::{
-    board::Board,
-    hal::{
-        self,
-        twim,
-        pac::twim0,
-    },
-};
+use microbit::{board::Board, hal};
 
 use mb2_wukong_expansion::{WuKong, LightMode};
 
@@ -22,13 +15,9 @@ fn main() -> ! {
     rtt_init_print!();
 
     let board = Board::take().unwrap();
-    let i2c = twim::Twim::new(
-        board.TWIM0,
-        board.i2c_external.into(),
-        twim0::frequency::FREQUENCY_A::K100,
-    );
-    let timer = hal::Timer::new(board.TIMER0);
-    let mut wukong = WuKong::new(timer, i2c);
+    let delay = hal::Timer::new(board.TIMER0);
+    let i2c = board.i2c_external;
+    let mut wukong = WuKong::new(delay, board.TWIM0, i2c.scl, i2c.sda);
     wukong.set_light_mode(LightMode::Breath).unwrap();
 
     loop {
