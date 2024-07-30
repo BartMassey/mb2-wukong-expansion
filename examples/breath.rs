@@ -24,7 +24,7 @@ fn main() -> ! {
     let board = Board::take().unwrap();
     let i2c = twim::Twim::new(
         board.TWIM0,
-        board.i2c_internal.into(),
+        board.i2c_external.into(),
         twim0::frequency::FREQUENCY_A::K100,
     );
     let timer = hal::Timer::new(board.TIMER0);

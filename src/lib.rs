@@ -28,12 +28,12 @@ impl<D: delay::DelayNs, T: i2c::I2c> WuKong<D, T> {
     pub fn set_light_mode(&mut self, light_mode: LightMode) -> Result<(), T::Error> {
         match light_mode {
             LightMode::Breath => {
-                let buf = [0x11, 0x00, 0x00, 0x00];
+                let buf = [0x11, 0, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
 
                 self.delay.delay_ms(100);
 
-                let buf = [0x12, 150];
+                let buf = [0x12, 150, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
             }
             LightMode::Off => todo!(),
