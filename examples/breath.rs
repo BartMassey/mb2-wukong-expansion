@@ -1,7 +1,8 @@
 #![no_main]
 #![no_std]
 
-use panic_probe as _;
+use panic_rtt_target as _;
+use rtt_target::rtt_init_print;
 
 use cortex_m::asm::wfi;
 use cortex_m_rt::entry;
@@ -18,6 +19,8 @@ use mb2_wukong_expansion::{WuKong, LightMode};
 
 #[entry]
 fn main() -> ! {
+    rtt_init_print!();
+
     let board = Board::take().unwrap();
     let i2c = twim::Twim::new(
         board.TWIM0,
