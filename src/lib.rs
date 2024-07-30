@@ -11,6 +11,7 @@ pub struct WuKong<D: delay::DelayNs, T: twim::Instance> {
 pub enum LightMode {
     Breath,
     Off,
+    Intensity(u8),
 }
 
 pub enum ServoType {
@@ -50,7 +51,21 @@ where
                 let buf = [0x12, 150, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
             }
-            LightMode::Off => todo!(),
+            light_mode => {
+                let intensity = match light_mode {
+                    LightMode::Off => 0,
+                    // XXX Fixme: return an error on overdrive.
+                    LightMode::Intensity(intensity) => intensity.min(100),
+                    LightMode::Breath => unreachable!(),
+                };
+                let buf = [0x12, intensity, 0, 0];
+                self.i2c.write(Self::I2C_ADDR, &buf)?;
+
+                self.delay.delay_ms(100);
+
+                let buf = [0x11, 160, 0, 0];
+                self.i2c.write(Self::I2C_ADDR, &buf)?;
+            }
         }
         Ok(())
     }
