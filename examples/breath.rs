@@ -8,7 +8,7 @@ use cortex_m_rt::entry;
 use embedded_hal::delay::DelayNs;
 use microbit::{board::Board, hal};
 
-use mb2_wukong_expansion::{WuKong, LightMode};
+use mb2_wukong_expansion::{WuKongBus, MoodLights};
 
 #[entry]
 fn main() -> ! {
@@ -18,16 +18,16 @@ fn main() -> ! {
     let wk_delay = hal::Timer::new(board.TIMER0);
     let mut delay = hal::Timer::new(board.TIMER1);
     let i2c = board.i2c_external;
-    let mut wukong = WuKong::new(wk_delay, board.TWIM0, i2c.scl, i2c.sda);
+    let mut wukong = WuKongBus::new(board.TWIM0, wk_delay, i2c.scl, i2c.sda);
 
     loop {
-        wukong.set_light_mode(LightMode::Breath).unwrap();
+        wukong.set_mood_lights(MoodLights::Breath).unwrap();
         delay.delay_ms(4000);
         for intensity in (0..=100).step_by(10) {
-            wukong.set_light_mode(LightMode::Intensity(intensity)).unwrap();
+            wukong.set_mood_lights(MoodLights::Intensity(intensity)).unwrap();
             delay.delay_ms(1000);
         }
-        wukong.set_light_mode(LightMode::Off).unwrap();
+        wukong.set_mood_lights(MoodLights::Off).unwrap();
         delay.delay_ms(500);
     }
 }

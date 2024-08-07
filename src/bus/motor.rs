@@ -5,10 +5,10 @@ pub enum Motor {
     M2,
 }
 
-impl<D, T> WuKong<D, T>
+impl<TWIM, I2cDelay> WuKongBus<TWIM, I2cDelay>
 where
-    D: delay::DelayNs,
-    T: twim::Instance,
+    TWIM: twim::Instance,
+    I2cDelay: delay::DelayNs,
 {
     pub fn set_motor_speed(&mut self, motor: Motor, speed: i8) -> Result<(), twim::Error> {
         let motor = match motor {

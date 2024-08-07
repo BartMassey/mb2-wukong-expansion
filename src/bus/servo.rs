@@ -13,14 +13,14 @@ impl From<ServoAngle> for u16 {
 #[derive(Debug, Clone, Copy)]
 pub enum Servo { S1, S2, S3, S4, S5, S6, S7, S8 }
 
-impl<D, T> WuKong<D, T>
+impl<TWIM, I2cDelay> WuKongBus<TWIM, I2cDelay>
 where
-    D: delay::DelayNs,
-    T: twim::Instance,
+    TWIM: twim::Instance,
+    I2cDelay: delay::DelayNs,
 {
     pub fn init_servo(&mut self, servo: Servo, max_angle: ServoAngle) {
         // XXX: Fix me, return an error for max_angle > 360° or < 1°
-        let max_angle = ServoAngle(max_angle.0.min(360).max(1));
+        let max_angle = ServoAngle(max_angle.0.clamp(1, 360));
         self.servo_max_angles[servo as usize] = Some(max_angle);
     }
 

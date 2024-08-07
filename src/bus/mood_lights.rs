@@ -1,19 +1,19 @@
 use crate::*;
 
-pub enum LightMode {
+pub enum MoodLights {
     Breath,
     Off,
     Intensity(u8),
 }
 
-impl<D, T> WuKong<D, T>
+impl<TWIM, I2cDelay> WuKongBus<TWIM, I2cDelay>
 where
-    D: delay::DelayNs,
-    T: twim::Instance,
+    TWIM: twim::Instance,
+    I2cDelay: delay::DelayNs,
 {
-    pub fn set_light_mode(&mut self, light_mode: LightMode) -> Result<(), twim::Error> {
-        match light_mode {
-            LightMode::Breath => {
+    pub fn set_mood_lights(&mut self, mood_lights: MoodLights) -> Result<(), twim::Error> {
+        match mood_lights {
+            MoodLights::Breath => {
                 let buf = [0x11, 0, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
 
@@ -22,12 +22,12 @@ where
                 let buf = [0x12, 150, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
             }
-            light_mode => {
-                let intensity = match light_mode {
-                    LightMode::Off => 0,
+            mood_lights => {
+                let intensity = match mood_lights {
+                    MoodLights::Off => 0,
                     // XXX Fixme: return an error on overdrive.
-                    LightMode::Intensity(intensity) => intensity.min(100),
-                    LightMode::Breath => unreachable!(),
+                    MoodLights::Intensity(intensity) => intensity.min(100),
+                    MoodLights::Breath => unreachable!(),
                 };
                 let buf = [0x12, intensity, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
