@@ -1,4 +1,5 @@
 use crate::*;
+use super::*;
 
 pub enum MoodLights {
     Breath,
@@ -11,7 +12,7 @@ where
     TWIM: twim::Instance,
     I2cDelay: delay::DelayNs,
 {
-    pub fn set_mood_lights(&mut self, mood_lights: MoodLights) -> Result<(), twim::Error> {
+    pub fn set_mood_lights(&mut self, mood_lights: MoodLights) -> Result<(), bus::Error> {
         match mood_lights {
             MoodLights::Breath => {
                 let buf = [0x11, 0, 0, 0];

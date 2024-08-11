@@ -1,8 +1,9 @@
 use crate::*;
 
 pub use smart_leds::RGB8;
-use smart_leds_trait::SmartLedsWrite;
+
 use nrf52833_hal::pwm;
+use smart_leds_trait::SmartLedsWrite;
 use ws2812_nrf52833_pwm::{self as ws2812, Ws2812};
 
 type AmbientPin = gpio::p1::P1_02<gpio::Output<gpio::PushPull>>;

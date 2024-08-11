@@ -171,12 +171,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "libm"
+version = "0.2.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ec2a862134d2a7d32d7983ddcdd1c4923530833c9f2ea1a44fc5fa473989058"
+
+[[package]]
 name = "mb2-wukong-expansion"
 version = "0.1.0"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
+ "embedded-dma",
  "embedded-hal 1.0.0",
+ "libm",
  "microbit-v2",
  "nrf52833-hal",
  "panic-probe",

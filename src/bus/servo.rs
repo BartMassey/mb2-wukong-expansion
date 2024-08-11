@@ -1,4 +1,5 @@
 use crate::*;
+use super::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct ServoAngle(pub u16);
