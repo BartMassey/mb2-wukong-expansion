@@ -10,7 +10,6 @@ pub use servo::{Servo, ServoAngle};
 
 pub(crate) use nrf52833_hal::{pac::twim0, twim};
 
-
 /// Error during bus driver operation.
 pub enum Error {
     /// I2C error.
@@ -47,12 +46,7 @@ where
 {
     pub const I2C_ADDR: u8 = 0x10;
 
-    pub fn new(
-        i2c: TWIM,
-        delay: I2cDelay,
-        scl: SclPin,
-        sda: SdaPin,
-    ) -> Self {
+    pub fn new(i2c: TWIM, delay: I2cDelay, scl: SclPin, sda: SdaPin) -> Self {
         let pins = twim::Pins {
             scl: scl.degrade(),
             sda: sda.degrade(),
@@ -61,6 +55,10 @@ where
         let i2c = twim::Twim::new(i2c, pins, freq);
 
         let servo_max_angles = Default::default();
-        Self { i2c, delay, servo_max_angles }
+        Self {
+            i2c,
+            delay,
+            servo_max_angles,
+        }
     }
 }

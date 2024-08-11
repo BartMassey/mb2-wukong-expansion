@@ -1,11 +1,11 @@
 #![no_std]
 
-pub mod bus;
 pub mod ambient;
+pub mod bus;
 pub mod buzzer;
 
-pub use bus::{WuKongBus, MoodLights, Motor, Servo, ServoAngle};
-pub use ambient::{RGB8, WuKongAmbient};
+pub use ambient::{WuKongAmbient, RGB8};
+pub use bus::{MoodLights, Motor, Servo, ServoAngle, WuKongBus};
 pub use buzzer::WuKongBuzzer;
 
 pub use embedded_hal::delay;

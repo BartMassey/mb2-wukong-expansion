@@ -41,7 +41,10 @@ where
     pub fn new(pwm: PWM, delay: PwmDelay, pin: AmbientPin) -> Result<Self, Error<PWM, PwmDelay>> {
         let ambient = Ws2812::new(pwm, delay, pin.degrade());
         let rgb_colors = [RGB8::default(); 4];
-        let mut ambient = Self { ambient, rgb_colors };
+        let mut ambient = Self {
+            ambient,
+            rgb_colors,
+        };
         ambient.send_colors()?;
         Ok(ambient)
     }

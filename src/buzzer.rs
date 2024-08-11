@@ -37,7 +37,6 @@ where
     buzzer: Option<pwm::Pwm<PWM>>,
 }
 
-
 fn period(timer_frequency: u32, key: u8) -> u32 {
     let f = 440.0 * powf(2.0, (key as f32 - 69.0) / 12.0);
     let p = timer_frequency as f32 / f;
@@ -84,15 +83,16 @@ where
             .enable_group(pwm::Group::G0)
             // Enable but don't start.
             .enable();
-        Self { buzzer: Some(buzzer) }
+        Self {
+            buzzer: Some(buzzer),
+        }
     }
 
     pub fn play_note(&mut self, key: u8, duration: u32) {
         let p = period(TIMER.period, key);
         let nloops = duration * TIMER.period / (2 * 1000 * p);
         let pwm = self.buzzer.take().unwrap();
-        pwm
-            .set_max_duty(p as u16)
+        pwm.set_max_duty(p as u16)
             .repeat(nloops as u16)
             // Be sure to be advancing the thing.
             .set_step_mode(pwm::StepMode::Auto)

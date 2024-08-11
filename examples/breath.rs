@@ -8,7 +8,7 @@ use cortex_m_rt::entry;
 use embedded_hal::delay::DelayNs;
 use microbit::{board::Board, hal};
 
-use mb2_wukong_expansion::{WuKongBus, MoodLights};
+use mb2_wukong_expansion::{MoodLights, WuKongBus};
 
 #[entry]
 fn main() -> ! {
@@ -24,7 +24,9 @@ fn main() -> ! {
         wukong.set_mood_lights(MoodLights::Breath).unwrap();
         delay.delay_ms(4000);
         for intensity in (0..=100).step_by(10) {
-            wukong.set_mood_lights(MoodLights::Intensity(intensity)).unwrap();
+            wukong
+                .set_mood_lights(MoodLights::Intensity(intensity))
+                .unwrap();
             delay.delay_ms(1000);
         }
         wukong.set_mood_lights(MoodLights::Off).unwrap();

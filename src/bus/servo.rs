@@ -1,5 +1,5 @@
-use crate::*;
 use super::*;
+use crate::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct ServoAngle(pub u16);
@@ -12,7 +12,16 @@ impl From<ServoAngle> for u16 {
 
 #[repr(u8)]
 #[derive(Debug, Clone, Copy)]
-pub enum Servo { S1, S2, S3, S4, S5, S6, S7, S8 }
+pub enum Servo {
+    S1,
+    S2,
+    S3,
+    S4,
+    S5,
+    S6,
+    S7,
+    S8,
+}
 
 impl<TWIM, I2cDelay> WuKongBus<TWIM, I2cDelay>
 where

@@ -6,12 +6,9 @@ use rtt_target::rtt_init_print;
 
 use cortex_m_rt::entry;
 use embedded_hal::delay::DelayNs;
-use microbit::{
-    board::Board,
-    hal::Timer,
-};
+use microbit::{board::Board, hal::Timer};
 
-use mb2_wukong_expansion::{WuKongBus, Servo, ServoAngle};
+use mb2_wukong_expansion::{Servo, ServoAngle, WuKongBus};
 
 #[entry]
 fn main() -> ! {
