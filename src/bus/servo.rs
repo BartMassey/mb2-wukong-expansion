@@ -1,12 +1,28 @@
-use super::*;
-use crate::*;
+use crate::bus;
+
+use nrf52833_hal::twim;
 
 #[derive(Debug, Clone, Copy)]
-pub struct ServoAngle(pub u16);
+pub struct ServoAngle(u16);
+
+impl ServoAngle {
+    pub fn new(angle: u16) -> Self {
+        angle.try_into().unwrap()
+    }
+}
 
 impl From<ServoAngle> for u16 {
     fn from(angle: ServoAngle) -> Self {
         angle.0
+    }
+}
+
+impl core::convert::TryFrom<u16> for ServoAngle {
+    type Error = core::convert::Infallible;
+
+    fn try_from(angle: u16) -> Result<Self, core::convert::Infallible> {
+        // XXX FIXME Return an error for out-of-range angles.
+        Ok(ServoAngle(angle.min(360)))
     }
 }
 
@@ -23,20 +39,43 @@ pub enum Servo {
     S8,
 }
 
-impl<TWIM, I2cDelay> WuKongBus<TWIM, I2cDelay>
+type ServoMaxAngles = [Option<ServoAngle>; 8];
+
+#[derive(Debug, Clone)]
+pub struct ServoConfig {
+    servo_max_angles: ServoMaxAngles,
+}
+
+impl ServoConfig {
+    pub fn new<C, I>(config: C) -> Self
+    where
+        C: IntoIterator<Item = I>,
+        I: Into<(Servo, ServoAngle)>,
+    {
+        let mut servo_max_angles: ServoMaxAngles = Default::default();
+        for item in config.into_iter() {
+            let (servo, servo_angle) = item.into();
+            // XXX: Fix me, return an error for max_angle > 360° or < 1°
+            let servo_angle = ServoAngle(servo_angle.0.max(1));
+            assert!(servo_max_angles[servo as usize].is_none());
+            servo_max_angles[servo as usize] = Some(servo_angle);
+        }
+        Self { servo_max_angles }
+    }
+}
+
+impl<TWIM> bus::WuKongBus<TWIM>
 where
     TWIM: twim::Instance,
-    I2cDelay: delay::DelayNs,
 {
-    pub fn init_servo(&mut self, servo: Servo, max_angle: ServoAngle) {
-        // XXX: Fix me, return an error for max_angle > 360° or < 1°
-        let max_angle = ServoAngle(max_angle.0.clamp(1, 360));
-        self.servo_max_angles[servo as usize] = Some(max_angle);
-    }
-
-    pub fn set_servo_angle(&mut self, servo: Servo, angle: ServoAngle) -> Result<(), twim::Error> {
+    pub fn set_servo_angle(
+        &mut self,
+        config: &ServoConfig,
+        servo: Servo,
+        angle: ServoAngle,
+    ) -> Result<(), twim::Error> {
+        let max_angle = config.servo_max_angles[servo as usize].unwrap().0;
         // XXX: Fix me, way better error handling needed here.
-        let max_angle = self.servo_max_angles[servo as usize].unwrap().0;
         let angle = angle.0.min(max_angle);
         let scaled_angle = angle * 180 / max_angle;
         assert!(scaled_angle <= 180);

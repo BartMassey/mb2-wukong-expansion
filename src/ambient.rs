@@ -1,8 +1,6 @@
-use crate::*;
-
 pub use smart_leds::RGB8;
 
-use nrf52833_hal::pwm;
+use nrf52833_hal::{gpio, pwm};
 use smart_leds_trait::SmartLedsWrite;
 use ws2812_nrf52833_pwm::{self as ws2812, Ws2812};
 

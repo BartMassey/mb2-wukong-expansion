@@ -1,5 +1,7 @@
-use super::*;
-use crate::*;
+use crate::bus;
+
+use embedded_hal::delay;
+use nrf52833_hal::twim;
 
 pub enum MoodLights {
     Breath,
@@ -7,18 +9,24 @@ pub enum MoodLights {
     Intensity(u8),
 }
 
-impl<TWIM, I2cDelay> WuKongBus<TWIM, I2cDelay>
+impl<TWIM> bus::WuKongBus<TWIM>
 where
     TWIM: twim::Instance,
-    I2cDelay: delay::DelayNs,
 {
-    pub fn set_mood_lights(&mut self, mood_lights: MoodLights) -> Result<(), bus::Error> {
+    pub fn set_mood_lights<Delay>(
+        &mut self,
+        delay: &mut Delay,
+        mood_lights: MoodLights,
+    ) -> Result<(), bus::Error>
+    where
+        Delay: delay::DelayNs,
+    {
         match mood_lights {
             MoodLights::Breath => {
                 let buf = [0x11, 0, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
 
-                self.delay.delay_ms(100);
+                delay.delay_ms(100);
 
                 let buf = [0x12, 150, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
@@ -33,7 +41,7 @@ where
                 let buf = [0x12, intensity, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
 
-                self.delay.delay_ms(100);
+                delay.delay_ms(100);
 
                 let buf = [0x11, 160, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;

@@ -15,21 +15,22 @@ fn main() -> ! {
     rtt_init_print!();
 
     let board = Board::take().unwrap();
-    let wk_delay = hal::Timer::new(board.TIMER0);
-    let mut delay = hal::Timer::new(board.TIMER1);
+    let mut delay = hal::Timer::new(board.TIMER0);
     let i2c = board.i2c_external;
-    let mut wukong = WuKongBus::new(board.TWIM0, wk_delay, i2c.scl, i2c.sda);
+    let mut wukong = WuKongBus::new(board.TWIM0, i2c.scl, i2c.sda);
 
     loop {
-        wukong.set_mood_lights(MoodLights::Breath).unwrap();
+        wukong
+            .set_mood_lights(&mut delay, MoodLights::Breath)
+            .unwrap();
         delay.delay_ms(4000);
         for intensity in (0..=100).step_by(10) {
             wukong
-                .set_mood_lights(MoodLights::Intensity(intensity))
+                .set_mood_lights(&mut delay, MoodLights::Intensity(intensity))
                 .unwrap();
             delay.delay_ms(1000);
         }
-        wukong.set_mood_lights(MoodLights::Off).unwrap();
+        wukong.set_mood_lights(&mut delay, MoodLights::Off).unwrap();
         delay.delay_ms(500);
     }
 }

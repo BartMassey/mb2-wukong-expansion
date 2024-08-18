@@ -1,8 +1,6 @@
-use crate::*;
-
 use embedded_dma as dma;
 use libm::*;
-use nrf52833_hal::pwm;
+use nrf52833_hal::{gpio, pwm};
 
 type BuzzerPin = gpio::p0::P0_02<gpio::Output<gpio::PushPull>>;
 

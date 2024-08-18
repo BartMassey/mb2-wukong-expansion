@@ -1,15 +1,15 @@
-use super::*;
-use crate::*;
+use crate::bus;
+
+use nrf52833_hal::twim;
 
 pub enum Motor {
     M1,
     M2,
 }
 
-impl<TWIM, I2cDelay> WuKongBus<TWIM, I2cDelay>
+impl<TWIM> bus::WuKongBus<TWIM>
 where
     TWIM: twim::Instance,
-    I2cDelay: delay::DelayNs,
 {
     pub fn set_motor_speed(&mut self, motor: Motor, speed: i8) -> Result<(), twim::Error> {
         let motor = match motor {
