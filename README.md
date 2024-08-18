@@ -1,5 +1,8 @@
-#![doc(html_root_url = "https://docs.rs/mb2-wukong-expansion/0.1.0")]
-/*!
+![Maintenance](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
+
+# mb2-wukong-expansion: Rust for the Elecfreaks Wukong Expansion Board for the BBC micro:bit v2
+Copyright © 2024 Bart Massey (Version 0.1.0)
+
 This Rust crate provides support for the [Elecfreaks Wukong
 Expansion Board]() (Wukong) for the [BBC micro:bit v2]()
 (MB2). This crate is currently built atop `nrf52833-hal` and
@@ -37,27 +40,8 @@ documentation.
 * *Servo* (`servo`): The Wukong has eight servo controllers
   with pins on the board. This crate can set the angle of
   these servos.
-*/
 
-#![no_std]
+# License
 
-#[cfg(feature = "ambient")]
-pub mod ambient;
-#[cfg(feature = "bus")]
-pub mod bus;
-#[cfg(feature = "buzzer")]
-pub mod buzzer;
-
-#[cfg(feature = "ambient")]
-pub use ambient::{WuKongAmbient, RGB8};
-#[cfg(feature = "buzzer")]
-pub use buzzer::WuKongBuzzer;
-
-#[cfg(feature = "bus")]
-pub use bus::WuKongBus;
-#[cfg(feature = "mood_lights")]
-pub use bus::MoodLights;
-#[cfg(feature = "motor")]
-pub use bus::Motor;
-#[cfg(feature = "servo")]
-pub use bus::{Servo, ServoAngle, ServoConfig};
+This work is licensed under the "MIT License". Please see the file
+`LICENSE.txt` in this distribution for license terms.
