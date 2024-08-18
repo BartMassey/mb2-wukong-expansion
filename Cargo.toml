@@ -9,10 +9,7 @@ embedded-hal = "1.0"
 libm = "0.2.8"
 smart-leds = "0.4.0"
 smart-leds-trait = "0.3.0"
-
-[dependencies.ws2812-nrf52833-pwm]
-version = "0.2.0"
-git = "http://github.com/BartMassey/ws2812-nrf52833-pwm"
+ws2812-nrf52833-pwm = "0.2.0"
 
 [dependencies.nrf52833-hal]
 version = "0.18.0"

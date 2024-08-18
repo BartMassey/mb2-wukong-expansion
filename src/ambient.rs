@@ -6,25 +6,23 @@ use nrf52833_hal::pwm;
 use smart_leds_trait::SmartLedsWrite;
 use ws2812_nrf52833_pwm::{self as ws2812, Ws2812};
 
-type AmbientPin = gpio::p1::P1_02<gpio::Output<gpio::PushPull>>;
-
-pub struct WuKongAmbient<PWM, PwmDelay>
+pub struct WuKongAmbient<PWM>
 where
     PWM: pwm::Instance,
 {
-    ambient: Ws2812<PWM, PwmDelay>,
+    ambient: Ws2812<{ 4 * 24 }, PWM>,
     rgb_colors: [RGB8; 4],
 }
 
 /// Error during ambient driver operation.
-pub enum Error<PWM, PwmDelay> {
+pub enum Error<PWM> {
     /// WS2812 error.
-    Ws2812Error(ws2812::Error<PWM, PwmDelay>),
+    Ws2812Error(ws2812::Error<PWM>),
     /// Bad index.
     IndexError(usize),
 }
 
-impl<PWM, PwmDelay> core::fmt::Debug for Error<PWM, PwmDelay> {
+impl<PWM> core::fmt::Debug for Error<PWM> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Error::Ws2812Error(err) => write!(f, "WS2812 error: {:?}", err),
@@ -33,13 +31,12 @@ impl<PWM, PwmDelay> core::fmt::Debug for Error<PWM, PwmDelay> {
     }
 }
 
-impl<PWM, PwmDelay> WuKongAmbient<PWM, PwmDelay>
+impl<PWM> WuKongAmbient<PWM>
 where
     PWM: pwm::Instance,
-    PwmDelay: delay::DelayNs,
 {
-    pub fn new(pwm: PWM, delay: PwmDelay, pin: AmbientPin) -> Result<Self, Error<PWM, PwmDelay>> {
-        let ambient = Ws2812::new(pwm, delay, pin.degrade());
+    pub fn new<PinMode>(pwm: PWM, pin: gpio::p1::P1_02<PinMode>) -> Result<Self, Error<PWM>> {
+        let ambient: Ws2812<{ 4 * 24 }, _> = Ws2812::new(pwm, pin.degrade());
         let rgb_colors = [RGB8::default(); 4];
         let mut ambient = Self {
             ambient,
@@ -49,12 +46,12 @@ where
         Ok(ambient)
     }
 
-    fn send_colors(&mut self) -> Result<(), Error<PWM, PwmDelay>> {
+    fn send_colors(&mut self) -> Result<(), Error<PWM>> {
         let leds = self.rgb_colors;
         self.ambient.write(leds).map_err(|e| Error::Ws2812Error(e))
     }
 
-    pub fn set_color(&mut self, index: usize, color: RGB8) -> Result<(), Error<PWM, PwmDelay>> {
+    pub fn set_color(&mut self, index: usize, color: RGB8) -> Result<(), Error<PWM>> {
         if index >= self.rgb_colors.len() {
             return Err(Error::IndexError(index));
         }

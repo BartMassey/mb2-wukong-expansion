@@ -469,7 +469,8 @@ dependencies = [
 [[package]]
 name = "ws2812-nrf52833-pwm"
 version = "0.2.0"
-source = "git+http://github.com/BartMassey/ws2812-nrf52833-pwm#9bbd0a7736602e17099ac899c7d83a176cff7524"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0a84fb7a460e9c27a6442b47aa139242020f8db74871c1fba91b7205c134d93"
 dependencies = [
  "embedded-dma",
  "embedded-hal 1.0.0",

@@ -6,13 +6,7 @@ use rtt_target::rtt_init_print;
 
 use cortex_m_rt::entry;
 use embedded_hal::delay::DelayNs;
-use microbit::{
-    board::Board,
-    hal::{
-        gpio::{DriveConfig, Level},
-        Timer,
-    },
-};
+use microbit::{board::Board, hal::Timer};
 
 use mb2_wukong_expansion::{WuKongAmbient, RGB8};
 
@@ -21,13 +15,8 @@ fn main() -> ! {
     rtt_init_print!();
 
     let board = Board::take().unwrap();
-    let wka_delay = Timer::new(board.TIMER0);
-    let mut delay = Timer::new(board.TIMER1);
-    let pin = board
-        .edge
-        .e16
-        .into_push_pull_output_drive(Level::Low, DriveConfig::HighDrive0HighDrive1);
-    let mut wka = WuKongAmbient::new(board.PWM0, wka_delay, pin).unwrap();
+    let mut delay = Timer::new(board.TIMER0);
+    let mut wka = WuKongAmbient::new(board.PWM0, board.edge.e16).unwrap();
     let mut red = 0u8;
     loop {
         let rgb = RGB8::new(red, 64, 64);
