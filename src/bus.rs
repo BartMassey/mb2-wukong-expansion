@@ -19,10 +19,16 @@ pub use servo::{Servo, ServoAngle, ServoConfig};
 
 use nrf52833_hal::{gpio, pac::twim0, twim};
 
-/// Error during bus driver operation.
+/// Error during bus operation.
 pub enum Error {
     /// I2C error.
     I2cError(twim::Error),
+    /// Mood light error.
+    MoodLightError(mood_lights::Error),
+    /// Motor error.
+    MotorError(motor::Error),
+    /// Servo error.
+    ServoError(servo::Error),
 }
 
 impl From<twim::Error> for Error {
@@ -35,6 +41,9 @@ impl core::fmt::Debug for Error {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::I2cError(err) => write!(f, "I2C error: {:?}", err),
+            Self::MoodLightError(err) => write!(f, "mood light error: {:?}", err),
+            Self::MotorError(err) => write!(f, "motor error: {:?}", err),
+            Self::ServoError(err) => write!(f, "servo error: {:?}", err),
         }
     }
 }

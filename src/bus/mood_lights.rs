@@ -12,6 +12,19 @@ use crate::bus;
 use embedded_hal::delay;
 use nrf52833_hal::twim;
 
+/// Error in mood light operation.
+#[derive(Debug, Clone, Copy)]
+pub enum Error {
+    /// Attempted to set intensity too high.
+    Overintensity(u8),
+}
+
+impl From<Error> for bus::Error {
+    fn from(error: Error) -> bus::Error {
+        bus::Error::MoodLightError(error)
+    }
+}
+
 /// Modes for the mood lights.
 pub enum MoodLights {
     /// Turned off (default).
@@ -53,8 +66,12 @@ where
             mood_lights => {
                 let intensity = match mood_lights {
                     MoodLights::Off => 0,
-                    // XXX Fixme: return an error on overdrive.
-                    MoodLights::Intensity(intensity) => intensity.min(100),
+                    MoodLights::Intensity(intensity) => {
+                        if intensity > 100 {
+                            return Err(Error::Overintensity(intensity).into());
+                        }
+                        intensity
+                    }
                     MoodLights::Breath => unreachable!(),
                 };
                 let buf = [0x12, intensity, 0, 0];

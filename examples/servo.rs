@@ -18,17 +18,19 @@ fn main() -> ! {
     let mut timer = Timer::new(board.TIMER0);
     let i2c = board.i2c_external;
     let mut wkb = WuKongBus::new(board.TWIM0, i2c.scl, i2c.sda);
-    let s1 = Servo::new(1);
-    let servo_config = ServoConfig::new([(s1, ServoAngle::new(180))]);
+    let s1 = Servo::new(1).unwrap();
+    let servo_config = ServoConfig::new([
+        (s1, ServoAngle::new(180).unwrap()),
+    ]).unwrap();
 
+    let a0 = ServoAngle::new(0).unwrap();
     loop {
-        for i in 1..=180 {
-            wkb.set_servo_angle(&servo_config, s1, ServoAngle::new(i))
-                .unwrap();
+        for i in 0..=180 {
+            let a = ServoAngle::new(i).unwrap();
+            wkb.set_servo_angle(&servo_config, s1, a).unwrap();
             timer.delay_ms(30);
         }
-        wkb.set_servo_angle(&servo_config, s1, ServoAngle::new(0))
-            .unwrap();
+        wkb.set_servo_angle(&servo_config, s1, a0).unwrap();
         timer.delay_ms(1000);
     }
 }

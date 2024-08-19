@@ -14,16 +14,37 @@ use nrf52833_hal::twim;
 pub enum Error {
     /// Given servo index out of range.
     InvalidIndex(u8),
+    /// Given servo angle out of range.
+    InvalidAngle(u16),
+    /// Given servo is a repeat in initialization.
+    RepeatServo(Servo),
+    /// Given servo is accessed while unconfigured.
+    UnconfiguredServo(Servo),
+    /// Attempted to drive given servo to the given angle,
+    /// past its given max angle.
+    Overangle(Servo, ServoAngle, ServoAngle),
 }
 
-/// Angle in degrees (0..=360).
+impl From<Error> for bus::Error {
+    fn from(error: Error) -> bus::Error {
+        bus::Error::ServoError(error)
+    }
+}
+
+
+/// Servo angle.
 #[derive(Debug, Clone, Copy)]
 pub struct ServoAngle(u16);
 
 impl ServoAngle {
     /// Make a new servo angle.
-    pub fn new(angle: u16) -> Self {
-        angle.try_into().unwrap()
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if `angle` is not a valid angle in
+    /// degrees (0..=359).
+    pub fn new(angle: u16) -> Result<Self, Error> {
+        angle.try_into()
     }
 }
 
@@ -34,11 +55,13 @@ impl From<ServoAngle> for u16 {
 }
 
 impl core::convert::TryFrom<u16> for ServoAngle {
-    type Error = core::convert::Infallible;
+    type Error = Error;
 
-    fn try_from(angle: u16) -> Result<Self, core::convert::Infallible> {
-        // XXX FIXME Return an error for out-of-range angles.
-        Ok(ServoAngle(angle.min(360)))
+    fn try_from(angle: u16) -> Result<Self, Error> {
+        if angle >= 360 {
+            return Err(Error::InvalidAngle(angle));
+        }
+        Ok(ServoAngle(angle))
     }
 }
 
@@ -50,11 +73,11 @@ impl Servo {
     /// Make a new servo id.  Uses one-based numbering: the
     /// first servo is `1`, not `0`.
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics when given an out-of-range ID.
-    pub fn new(servo: u8) -> Self {
-        servo.try_into().unwrap()
+    /// Returns an error when given an out-of-range ID.
+    pub fn new(servo: u8) -> Result<Self, Error> {
+        servo.try_into()
     }
 }
 
@@ -88,10 +111,11 @@ impl ServoConfig {
     /// Make a new servo config from an iterator over servos
     /// and their max angles.
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if a servo is repeated in the iterator.
-    pub fn new<C, I>(config: C) -> Self
+    /// * Returns an error if a servo is repeated in the iterator.
+    /// * Returns an error if a max angle is 0°.
+    pub fn new<C, I>(config: C) -> Result<Self, bus::Error>
     where
         C: IntoIterator<Item = I>,
         I: Into<(Servo, ServoAngle)>,
@@ -99,13 +123,17 @@ impl ServoConfig {
         let mut servo_max_angles: ServoMaxAngles = Default::default();
         for item in config.into_iter() {
             let (servo, servo_angle) = item.into();
-            let servo = u8::from(servo) as usize;
-            // XXX: Fix me, return an error for max_angle > 360° or < 1°
-            let servo_angle = ServoAngle(servo_angle.0.max(1));
-            assert!(servo_max_angles[servo].is_none());
-            servo_max_angles[servo] = Some(servo_angle);
+            let servo_value = u8::from(servo) as usize;
+            let servo_angle_value = u16::from(servo_angle);
+            if servo_angle_value < 1 {
+                return Err(Error::InvalidAngle(servo_angle_value).into());
+            }
+            if servo_max_angles[servo_value].is_some() {
+                return Err(Error::RepeatServo(servo).into());
+            }
+            servo_max_angles[servo_value] = Some(servo_angle);
         }
-        Self { servo_max_angles }
+        Ok(Self { servo_max_angles })
     }
 }
 
@@ -118,22 +146,31 @@ where
     ///
     /// # Errors
     ///
-    /// Returns an error if the I2C write fails.
+    /// * Returns an error if the given servo is not configured.
+    /// * Returns an error on an attempt to drive the given servo
+    ///   beyond its configured max angle.
+    /// * Returns an error if the I2C write fails.
     pub fn set_servo_angle(
         &mut self,
         config: &ServoConfig,
         servo: Servo,
         angle: ServoAngle,
     ) -> Result<(), bus::Error> {
-        let servo = u8::from(servo);
-        let max_angle = config.servo_max_angles[servo as usize].unwrap().0;
-        // XXX: Fix me, way better error handling needed here.
-        let angle = angle.0.min(max_angle);
-        let scaled_angle = angle * 180 / max_angle;
+        let servo_value = u8::from(servo);
+        let opt_max_angle = config.servo_max_angles[servo_value as usize];
+        let max_angle = opt_max_angle.ok_or_else(
+            || <bus::Error>::from(Error::UnconfiguredServo(servo))
+        )?;
+        let max_angle_value = u16::from(max_angle);
+        let angle_value = u16::from(angle);
+        if angle_value > max_angle_value {
+            return Err(Error::Overangle(servo, angle, max_angle).into());
+        }
+        let scaled_angle = angle_value * 180 / max_angle_value;
         assert!(scaled_angle <= 180);
-        let servo = servo + 3;
+        let servo_value = servo_value + 3;
 
-        let buf = [servo, scaled_angle as u8, 0, 0];
+        let buf = [servo_value, scaled_angle as u8, 0, 0];
         self.i2c.write(Self::I2C_ADDR, &buf)?;
         Ok(())
     }
