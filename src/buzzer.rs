@@ -1,8 +1,13 @@
+/*!
+Buzzer driver for Wukong. The "buzzer" is a small magnetic speaker mounted
+on the bottom of the Wukong board. This code allows sending a square wave
+to this speaker at a frequency corresponding to a given MIDI key number.
+It can be used to play tunes, or just as a beeper.
+*/
+
 use embedded_dma as dma;
 use libm::*;
 use nrf52833_hal::{gpio, pwm};
-
-type BuzzerPin = gpio::p0::P0_02<gpio::Output<gpio::PushPull>>;
 
 struct Timer {
     scale: pwm::Prescaler,
@@ -28,6 +33,7 @@ impl<PWM> core::fmt::Debug for Error<PWM> {
     }
 }
 
+/// Wukong "buzzer" speaker driver.
 pub struct WuKongBuzzer<PWM>
 where
     PWM: pwm::Instance,
@@ -64,11 +70,16 @@ impl<PWM> WuKongBuzzer<PWM>
 where
     PWM: pwm::Instance,
 {
-    pub fn new(pwm: PWM, pin: BuzzerPin) -> Self {
+    /// Make a new buzzer driver. Requires a `pwm` to
+    /// generate the necessary signal. Takes ownership of
+    /// the specific `pin` attached to the Wukong speaker
+    /// (MB2 P0), and thus can only be instantiated once.
+    pub fn new<PinState>(pwm: PWM, pin: gpio::p0::P0_02<PinState>) -> Self {
         let buzzer = pwm::Pwm::new(pwm);
+        let pin = pin.into_push_pull_output(gpio::Level::Low).degrade();
         buzzer
             // output the waveform on the speaker pin
-            .set_output_pin(pwm::Channel::C0, pin.degrade())
+            .set_output_pin(pwm::Channel::C0, pin)
             // Prescaler set for 2MHz.
             .set_prescaler(TIMER.scale)
             // Configure for up counter mode.
@@ -86,6 +97,9 @@ where
         }
     }
 
+    /// Play a square wave at the frequency given by the
+    /// MIDI key number `key` (0..=127), for the given
+    /// `duration` in milliseconds.
     pub fn play_note(&mut self, key: u8, duration: u32) {
         let p = period(TIMER.period, key);
         let nloops = duration * TIMER.period / (2 * 1000 * p);

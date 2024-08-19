@@ -1,11 +1,24 @@
+/*!
+Driver for the Wukong "mood lights". These are blue LEDs on
+the bottom of the Wukong board that are controlled via
+the I2C bus. The LEDs move in unison, and can be set either
+to "breathe" ("breath" in the Wukong documentation) or to a
+specific intensity. The interface here mostly follows that
+of the MicroPython and PXT implementations.
+*/
+
 use crate::bus;
 
 use embedded_hal::delay;
 use nrf52833_hal::twim;
 
+/// Modes for the mood lights.
 pub enum MoodLights {
-    Breath,
+    /// Turned off (default).
     Off,
+    /// "Breathing" with a period of a couple of seconds.
+    Breath,
+    /// On with given intensity (0..=100).
     Intensity(u8),
 }
 
@@ -13,6 +26,12 @@ impl<TWIM> bus::WuKongBus<TWIM>
 where
     TWIM: twim::Instance,
 {
+    /// Set the `mood_lights` to the given mode. A `delay` unit must
+    /// be borrowed to properly implement the protocol.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if an I2C write fails.
     pub fn set_mood_lights<Delay>(
         &mut self,
         delay: &mut Delay,
