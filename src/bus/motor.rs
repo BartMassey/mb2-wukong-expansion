@@ -66,7 +66,7 @@ where
     /// # Errors
     ///
     /// Returns an error if the I2C write fails.
-    pub fn set_motor_speed(&mut self, motor: Motor, velocity: i8) -> Result<(), bus::Error> {
+    pub fn set_motor_velocity(&mut self, motor: Motor, velocity: i8) -> Result<(), bus::Error> {
         if !(-100..=100).contains(&velocity) {
             return Err(Error::Overspeed(velocity).into());
         }
