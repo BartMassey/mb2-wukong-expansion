@@ -1,12 +1,22 @@
 ![Maintenance](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
+[![crates-io](https://img.shields.io/crates/v/mb2-wukong-expansion.svg)](https://crates.io/crates/mb2-wukong-expansion)
+[![api-docs](https://docs.rs/mb2-wukong-expansion/badge.svg)](https://docs.rs/mb2-wukong-expansion)
+[![dependency-status](https://deps.rs/repo/github/BartMassey/mb2-wukong-expansion/status.svg)](https://deps.rs/repo/github/BartMassey/mb2-wukong-expansion)
 
 # mb2-wukong-expansion: Rust for the Elecfreaks Wukong Expansion Board for the BBC micro:bit v2
 Copyright © 2024 Bart Massey (Version 0.1.0)
 
+
 This Rust crate provides support for the [Elecfreaks Wukong
-Expansion Board]() (Wukong) for the [BBC micro:bit v2]()
-(MB2). This crate is currently built atop `nrf52833-hal` and
-is probably best used with that.
+Expansion
+Board](https://shop.elecfreaks.com/products/elecfreaks-micro-bit-wukong-expansion-board-adapter)
+(Wukong; see also their
+[wiki](https://www.elecfreaks.com/learn-en/microbitExtensionModule/wukong.html))
+for the [BBC micro:bit
+v2](https://microbit.org/new-microbit/) (MB2).
+
+This crate is currently built atop `nrf52833-hal` and is
+probably best used with that.
 
 The Wukong provides a rechargeable battery that can power
 itself and the MB2, and provides expansion pins for 5V and
@@ -45,3 +55,16 @@ documentation.
 
 This work is licensed under the "MIT License". Please see the file
 `LICENSE.txt` in this distribution for license terms.
+
+# Acknowledgments
+
+Thanks to Elecfreaks for doing this board, and to the folks
+who wrote the Micropython and PTX Javascript that I cribbed
+the I2C protocol from.
+
+# Spelling
+
+Is it "WuKong" or "Wukong"? Elecfreaks seems to randomly
+switch between the two capitalizations in their products, so
+I won't worry about it much: I haven't been consistent
+either.

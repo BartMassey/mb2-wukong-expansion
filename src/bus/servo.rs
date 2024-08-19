@@ -27,7 +27,7 @@ pub enum Error {
 
 impl From<Error> for bus::Error {
     fn from(error: Error) -> bus::Error {
-        bus::Error::ServoError(error)
+        bus::Error::Servo(error)
     }
 }
 

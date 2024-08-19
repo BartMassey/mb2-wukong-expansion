@@ -1,9 +1,16 @@
 #![doc(html_root_url = "https://docs.rs/mb2-wukong-expansion/0.1.0")]
 /*!
+
 This Rust crate provides support for the [Elecfreaks Wukong
-Expansion Board]() (Wukong) for the [BBC micro:bit v2]()
-(MB2). This crate is currently built atop `nrf52833-hal` and
-is probably best used with that.
+Expansion
+Board](https://shop.elecfreaks.com/products/elecfreaks-micro-bit-wukong-expansion-board-adapter)
+(Wukong; see also their
+[wiki](https://www.elecfreaks.com/learn-en/microbitExtensionModule/wukong.html))
+for the [BBC micro:bit
+v2](https://microbit.org/new-microbit/) (MB2).
+
+This crate is currently built atop `nrf52833-hal` and is
+probably best used with that.
 
 The Wukong provides a rechargeable battery that can power
 itself and the MB2, and provides expansion pins for 5V and

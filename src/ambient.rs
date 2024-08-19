@@ -23,6 +23,15 @@ where
     rgb_colors: [RGB8; 4],
 }
 
+impl<PWM> core::fmt::Debug for WuKongAmbient<PWM>
+where
+    PWM: pwm::Instance,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "rgb_colors: {:?}", self.rgb_colors)
+    }
+}
+
 /// Error during ambient driver operation.
 pub enum Error<PWM> {
     /// WS2812 error.

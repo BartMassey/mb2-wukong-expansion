@@ -20,7 +20,7 @@ pub enum Error {
 
 impl From<Error> for bus::Error {
     fn from(error: Error) -> bus::Error {
-        bus::Error::MotorError(error)
+        bus::Error::Motor(error)
     }
 }
 

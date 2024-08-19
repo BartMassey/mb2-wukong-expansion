@@ -1,7 +1,15 @@
 [package]
 name = "mb2-wukong-expansion"
 version = "0.1.0"
+authors = ["Bart Massey <bart.massey@gmail.com>"]
 edition = "2021"
+categories = ["embedded", "no-std", "hardware-support"]
+keywords = ["microbit", "wukong"]
+description = "Board crate for Elecfreaks Wukong Extension for the BBC micro:bit v2"
+documentation = "https://docs.rs/crate/mb2-wukong-expansion"
+license-file = "LICENSE.txt"
+readme = "README.md"
+repository = "https://github.com/BartMassey/mb2-wukong-expansion"
 
 [dependencies]
 embedded-dma = "0.2.0"
@@ -37,3 +45,6 @@ rtt-target = "0.5.0"
 [dev-dependencies.cortex-m]
 version = "0.7"
 features = ["inline-asm", "critical-section-single-core"]
+
+[badges.maintenance]
+status = "actively-developed"

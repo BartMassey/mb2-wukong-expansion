@@ -21,11 +21,12 @@ pub enum Error {
 
 impl From<Error> for bus::Error {
     fn from(error: Error) -> bus::Error {
-        bus::Error::MoodLightError(error)
+        bus::Error::MoodLight(error)
     }
 }
 
 /// Modes for the mood lights.
+#[derive(Debug, Clone, Copy)]
 pub enum MoodLights {
     /// Turned off (default).
     Off,
