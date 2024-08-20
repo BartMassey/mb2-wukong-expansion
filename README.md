@@ -4,7 +4,7 @@
 [![dependency-status](https://deps.rs/repo/github/BartMassey/mb2-wukong-expansion/status.svg)](https://deps.rs/repo/github/BartMassey/mb2-wukong-expansion)
 
 # mb2-wukong-expansion: Rust for the Elecfreaks Wukong Expansion Board for the BBC micro:bit v2
-Copyright © 2024 Bart Massey (Version 0.1.0)
+Copyright © 2024 Bart Massey (Version 0.1.1)
 
 
 This Rust crate provides support for the [Elecfreaks Wukong

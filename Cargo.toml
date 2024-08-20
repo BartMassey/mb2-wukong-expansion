@@ -1,6 +1,6 @@
 [package]
 name = "mb2-wukong-expansion"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Bart Massey <bart.massey@gmail.com>"]
 edition = "2021"
 categories = ["embedded", "no-std", "hardware-support"]
@@ -12,15 +12,15 @@ readme = "README.md"
 repository = "https://github.com/BartMassey/mb2-wukong-expansion"
 
 [dependencies]
-embedded-dma = "0.2.0"
+embedded-dma = "0.2"
 embedded-hal = "1.0"
-libm = "0.2.8"
-smart-leds = "0.4.0"
-smart-leds-trait = "0.3.0"
-ws2812-nrf52833-pwm = "0.2.0"
+libm = "0.2"
+smart-leds = "0.4"
+smart-leds-trait = "0.3"
+ws2812-nrf52833-pwm = "0.2"
 
 [dependencies.nrf52833-hal]
-version = "0.18.0"
+version = "0.18"
 default-features = false
 
 [features]
