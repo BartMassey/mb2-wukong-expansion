@@ -219,7 +219,7 @@ checksum = "4ec2a862134d2a7d32d7983ddcdd1c4923530833c9f2ea1a44fc5fa473989058"
 
 [[package]]
 name = "mb2-wukong-expansion"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
@@ -571,9 +571,9 @@ dependencies = [
 
 [[package]]
 name = "ws2812-nrf52833-pwm"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0a84fb7a460e9c27a6442b47aa139242020f8db74871c1fba91b7205c134d93"
+checksum = "c29723d9f1443a82fc51a2a08831ed6ae93fbeb3f9829c5cebbd706444c61344"
 dependencies = [
  "embedded-dma",
  "embedded-hal 1.0.0",

@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/mb2-wukong-expansion/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/mb2-wukong-expansion/0.1.2")]
 /*!
 
 This Rust crate provides support for the [Elecfreaks Wukong
