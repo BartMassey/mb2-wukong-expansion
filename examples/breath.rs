@@ -21,16 +21,16 @@ fn main() -> ! {
 
     loop {
         wukong
-            .set_mood_lights(&mut delay, MoodLights::Breath)
+            .set_mood_lights(MoodLights::Breath)
             .unwrap();
         delay.delay_ms(4000);
         for intensity in (0..=100).step_by(10) {
             wukong
-                .set_mood_lights(&mut delay, MoodLights::Intensity(intensity))
+                .set_mood_lights(MoodLights::Intensity(intensity))
                 .unwrap();
             delay.delay_ms(1000);
         }
-        wukong.set_mood_lights(&mut delay, MoodLights::Off).unwrap();
+        wukong.set_mood_lights(MoodLights::Off).unwrap();
         delay.delay_ms(500);
     }
 }

@@ -9,7 +9,6 @@ of the MicroPython and PXT implementations.
 
 use crate::bus;
 
-use embedded_hal::delay;
 use nrf52833_hal::twim;
 
 /// Error in mood light operation.
@@ -46,20 +45,14 @@ where
     /// # Errors
     ///
     /// Returns an error if an I2C write fails.
-    pub fn set_mood_lights<Delay>(
+    pub fn set_mood_lights(
         &mut self,
-        delay: &mut Delay,
         mood_lights: MoodLights,
-    ) -> Result<(), bus::Error>
-    where
-        Delay: delay::DelayNs,
-    {
+    ) -> Result<(), bus::Error> {
         match mood_lights {
             MoodLights::Breath => {
                 let buf = [0x11, 0, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
-
-                delay.delay_ms(100);
 
                 let buf = [0x12, 150, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
@@ -77,8 +70,6 @@ where
                 };
                 let buf = [0x12, intensity, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
-
-                delay.delay_ms(100);
 
                 let buf = [0x11, 160, 0, 0];
                 self.i2c.write(Self::I2C_ADDR, &buf)?;
